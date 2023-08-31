@@ -1,43 +1,91 @@
 <template>
-  <div class="tab-container">
-    <el-table :data="alarms" border stripe style="width: 100%">
-      <el-table-column prop="id" label="ID" show-overflow-tooltip="true" width="60">
+  <div class="tab-container" style="width: 100%">
+    <el-table
+      :data="alarms"
+      :border="true"
+      :stripe="true"
+      :fit="true"
+      size="small"
+      :row-key="(alarm) => alarm.id"
+      @row-dblclick="handleRowDblclick"
+    >
+      <el-table-column prop="id" type="selection" width="40px"> </el-table-column>
+      <el-table-column
+        prop="id"
+        label="ID"
+        :resizable="true"
+        :show-overflow-tooltip="true"
+        width="60px"
+      >
       </el-table-column>
       <el-table-column
         prop="managedObject"
         label="ManagedObject"
-        show-overflow-tooltip="true"
-        width="220"
+        :resizable="true"
+        :show-overflow-tooltip="true"
       >
       </el-table-column>
-      <el-table-column prop="eventTime" label="Time" width="230"> </el-table-column>
+      <el-table-column
+        prop="eventTime"
+        label="EventTime"
+        :resizable="true"
+        :show-overflow-tooltip="true"
+        width="200px"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="alarmType"
+        label="AlarmType"
+        :resizable="true"
+        :show-overflow-tooltip="true"
+        width="125px"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="perceivedSeverity"
+        label="Severity"
+        :resizable="true"
+        :show-overflow-tooltip="true"
+        width="80px"
+      >
+      </el-table-column>
       <el-table-column
         prop="clearFlag"
         label="Clear"
         :formatter="transformClearFlag"
-        show-overflow-tooltip="true"
-        width="130"
+        :resizable="true"
+        :show-overflow-tooltip="true"
+        width="110px"
       >
       </el-table-column>
       <el-table-column
         prop="terminateState"
         label="Terminate"
         :formatter="transformTerminateStatus"
-        show-overflow-tooltip="true"
-        width="150"
+        :resizable="true"
+        :show-overflow-tooltip="true"
+        width="135px"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="additionalText"
+        label="AdditionalText"
+        :resizable="true"
+        :show-overflow-tooltip="true"
       >
       </el-table-column>
     </el-table>
 
-    <div style="margin-top: 8px;">
+    <div style="margin-top: 8px">
       <el-pagination
-      background
-      @current-change="handleCurrentChange"
-      :current-page.sync="pageIndex"
-      :page-size="pageSize"
-      layout="total, prev, pager, next, jumper"
-      :total="maxCount">
-    </el-pagination>
+        background
+        @current-change="handlePageChange"
+        :current-page.sync="pageIndex"
+        :page-size="pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="maxCount"
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -46,7 +94,7 @@ import requests from '../../http';
 
 const PAGE_SIZE = 10;
 
-const getAll = function (pageIndex, recall) {
+function getAll(pageIndex, recall) {
   let reqPageIndex = pageIndex;
   if (pageIndex < 0) {
     reqPageIndex = 0;
@@ -69,7 +117,6 @@ const getAll = function (pageIndex, recall) {
     })
     .catch((error) => {
       // 处理错误情况
-      console.log(error);
       if (error.response) {
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
         console.log(error.response.data);
@@ -89,7 +136,7 @@ const getAll = function (pageIndex, recall) {
     .then(() => {
       // 总是会执行
     });
-};
+}
 
 export default {
   name: 'AlarmList',
@@ -124,7 +171,7 @@ export default {
     pageAfter() {
       getAll(this.pageIndex + 1, this.refreshPageData);
     },
-    handleCurrentChange(val) {
+    handlePageChange(val) {
       getAll(val, this.refreshPageData);
     },
     transformClearFlag(row, column, cellValue) {
@@ -132,6 +179,9 @@ export default {
     },
     transformTerminateStatus(row, column, cellValue) {
       return cellValue === 0 ? 'NOT_TERMINATED' : 'TERMINATED';
+    },
+    handleRowDblclick(alarm) {
+      this.$emit('alarm-dblclick', alarm);
     },
   },
   mounted() {

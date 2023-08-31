@@ -1,11 +1,7 @@
 <template>
-    <div>
-        <my-tab :tabs="tabs" :current-tab.sync="currentTab">
-            <KeepAlive>
-                <component :is='currentTab'></component>
-            </KeepAlive>
-        </my-tab>
-    </div>
+  <my-tab :tabs="tabs" :current-tab.sync="currentTab">
+    <component :is="currentTab" @alarm-dblclick="handleRowDblclick"></component>
+  </my-tab>
 </template>
 <script>
 import MyTab from '../../components/test1/MyTab.vue';
@@ -20,7 +16,7 @@ export default {
         { id: 'alarm-list', name: 'AlarmList' },
         { id: 'alarm-create', name: 'CreateAlarm' },
       ],
-      currentTab: '',
+      currentTab: 'alarm-list',
     };
   },
   components: {
@@ -28,8 +24,11 @@ export default {
     'alarm-list': AlarmList,
     'alarm-create': AlarmCreate,
   },
+  methods: {
+    handleRowDblclick(row) {
+      console.log(row);
+    },
+  },
 };
 </script>
-<style lang="css">
-
-</style>
+<style lang="css"></style>

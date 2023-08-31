@@ -1,7 +1,19 @@
 <template>
   <div class="tab">
-    <el-tabs class="tabs" v-model="selectedTab" tab-position="left" @tab-click="handleClick">
-      <el-tab-pane v-for="tab in tabs" :key="tab.id" :label="tab.name" :name="tab.id"></el-tab-pane>
+    <el-tabs
+      class="tabs"
+      type="card"
+      v-model="selectedTab"
+      tab-position="left"
+      :stretch="true"
+      @tab-click="handleTabClick"
+    >
+      <el-tab-pane
+        v-for="tab in tabs"
+        :key="tab.id"
+        :label="tab.name"
+        :name="tab.id"
+      ></el-tab-pane>
     </el-tabs>
     <slot></slot>
   </div>
@@ -17,12 +29,10 @@ export default {
   props: ['tabs', 'currentTab'],
   methods: {
     selectTab(tabId) {
-      console.log(tabId);
       this.selectedTab = tabId;
       this.$emit('update:currentTab', tabId);
     },
-    handleClick(tab, event) {
-      console.log(tab, event);
+    handleTabClick() {
       this.$emit('update:currentTab', this.selectedTab);
     },
   },
@@ -36,7 +46,7 @@ export default {
 }
 
 .tabs {
-  min-width: 60px;
+  min-width: 120px;
   max-width: 200px;
   padding: 0 8px 0 8px;
   margin: 8px 0 8px 0;

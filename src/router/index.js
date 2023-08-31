@@ -23,6 +23,11 @@ const routes = [
     name: 'alarm',
     component: () => import('../views/test1/AlarmView.vue'),
   },
+  {
+    path: '/alarm/edit',
+    name: 'alarmEdit',
+    component: () => import('../views/test1/AlarmEditView.vue'),
+  },
 ];
 
 const router = new VueRouter({

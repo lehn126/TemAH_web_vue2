@@ -1,16 +1,21 @@
 <template>
-  <div>
-    <h1>未完成</h1>
+  <div class="tab-container">
+    <alarm-create :is-create="true"></alarm-create>
   </div>
 </template>
 <script>
+import AlarmEdit from '@/components/test1/AlarmEdit.vue';
+
 export default {
   name: 'AlarmCreate',
-  data() {
-    return {
-
-    };
+  components: {
+    'alarm-create': AlarmEdit,
   },
 };
 </script>
-<style></style>
+<style>
+.tab-container {
+  padding: 8px;
+  padding-top: 24px;
+}
+</style>

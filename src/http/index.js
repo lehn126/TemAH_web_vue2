@@ -14,7 +14,9 @@ requests.interceptors.request.use(
   // 在发送请求之前做些什么
   (config) => config,
   // 对请求错误做些什么
-  (err) => err,
+  (err) => {
+    Promise.reject(err);
+  },
 );
 
 // 响应拦截器（在数据返回之后，做一些事情）
@@ -22,6 +24,8 @@ requests.interceptors.response.use(
   // 对响应数据做点什么
   (res) => res.data,
   // 对响应错误做点什么
-  (err) => err,
+  (err) => {
+    Promise.reject(err);
+  },
 );
 export default requests;
