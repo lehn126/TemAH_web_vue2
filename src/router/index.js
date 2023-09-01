@@ -24,7 +24,7 @@ const routes = [
     component: () => import('../views/test1/AlarmView.vue'),
   },
   {
-    path: '/alarm/edit',
+    path: '/alarm/edit/:id(\\d+)?', // 使用正则表达式进行动态路由匹配（?表示传入id或不传入都行）
     name: 'alarmEdit',
     component: () => import('../views/test1/AlarmEditView.vue'),
   },

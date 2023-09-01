@@ -8,6 +8,10 @@ import MyTab from '../../components/test1/MyTab.vue';
 import AlarmList from '../../components/test1/AlarmList.vue';
 import AlarmCreate from '../../components/test1/AlarmCreate.vue';
 
+function handleRowDblclick(row) {
+  console.log(row);
+}
+
 export default {
   name: 'AlarmView',
   data() {
@@ -16,7 +20,7 @@ export default {
         { id: 'alarm-list', name: 'AlarmList' },
         { id: 'alarm-create', name: 'CreateAlarm' },
       ],
-      currentTab: 'alarm-list',
+      currentTab: '',
     };
   },
   components: {
@@ -25,10 +29,9 @@ export default {
     'alarm-create': AlarmCreate,
   },
   methods: {
-    handleRowDblclick(row) {
-      console.log(row);
-    },
+    handleRowDblclick,
   },
 };
+
 </script>
-<style lang="css"></style>
+<style></style>
