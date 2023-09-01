@@ -1,6 +1,9 @@
 <template>
   <my-tab :tabs="tabs" :current-tab.sync="currentTab">
-    <component :is="currentTab" @alarm-dblclick="handleRowDblclick"></component>
+    <component
+      :is="currentTab"
+      @alarm-dblclick="handleRowDblclick"
+    ></component>
   </my-tab>
 </template>
 <script>
@@ -9,7 +12,8 @@ import AlarmList from '../../components/test1/AlarmList.vue';
 import AlarmCreate from '../../components/test1/AlarmCreate.vue';
 
 function handleRowDblclick(row) {
-  console.log(row);
+  this.$store.dispatch('setOperationAlarm', row);
+  this.$router.push({ name: 'alarmEdit', params: { id: row.id } });
 }
 
 export default {
@@ -17,10 +21,10 @@ export default {
   data() {
     return {
       tabs: [
-        { id: 'alarm-list', name: 'AlarmList' },
-        { id: 'alarm-create', name: 'CreateAlarm' },
+        { id: 'alarm-list', name: '告警列表' },
+        { id: 'alarm-create', name: '创建告警' },
       ],
-      currentTab: '',
+      currentTab: 'alarm-list',
     };
   },
   components: {
@@ -32,6 +36,5 @@ export default {
     handleRowDblclick,
   },
 };
-
 </script>
 <style></style>

@@ -6,9 +6,8 @@
       ref="ruleForm"
       label-width="120px"
       size="small"
-      class="demo-ruleForm"
     >
-      <el-form-item v-if="!createModel" label="AlarmID" prop="id">
+      <el-form-item v-if="!isCreateModel" label="AlarmID" prop="id">
         <el-input disabled v-model="ruleForm.id"></el-input>
       </el-form-item>
       <el-form-item label="ManagedObject" prop="managedObject">
@@ -36,16 +35,23 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="AlarmType" prop="alarmType" style="text-align: left;">
+      <el-form-item label="AlarmType" prop="alarmType" style="text-align: left">
         <el-select v-model="ruleForm.alarmType" placeholder="请选择AlarmType">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+          <el-option label="CommunicationsAlarm" value="CommunicationsAlarm"></el-option>
+          <el-option label="ProcessingErrorAlarm" value="ProcessingErrorAlarm"></el-option>
+          <el-option label="EnvironmentalAlarm" value="EnvironmentalAlarm"></el-option>
+          <el-option label="QualityOfServiceAlarm" value="QualityOfServiceAlarm"></el-option>
+          <el-option label="EquipmentAlarm" value="EquipmentAlarm"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Severity" prop="perceivedSeverity" style="text-align: left;">
+      <el-form-item label="Severity" prop="perceivedSeverity" style="text-align: left">
         <el-select v-model="ruleForm.perceivedSeverity" placeholder="请选择Severity">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+          <el-option label="Cleared" value="Cleared"></el-option>
+          <el-option label="Indeterminate" value="Indeterminate"></el-option>
+          <el-option label="Critical" value="Critical"></el-option>
+          <el-option label="Major" value="Major"></el-option>
+          <el-option label="Minor" value="Minor"></el-option>
+          <el-option label="Warning" value="Warning"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="ProbableCause" prop="probableCause">
@@ -54,34 +60,72 @@
       <el-form-item label="SpecificProblem" prop="specificProblem">
         <el-input v-model="ruleForm.specificProblem"></el-input>
       </el-form-item>
-      <el-form-item label="Cleared" prop="clearFlag" style="text-align: left;">
+      <el-form-item label="Cleared" prop="clearFlag" style="text-align: left">
         <el-switch v-model="ruleForm.clearFlag"></el-switch>
       </el-form-item>
-      <el-form-item label="Terminated" prop="terminateState" style="text-align: left;">
+      <el-form-item label="Terminated" prop="terminateState" style="text-align: left">
         <el-switch v-model="ruleForm.terminateState"></el-switch>
       </el-form-item>
       <el-form-item label="AdditionalText" prop="additionalText">
         <el-input type="textarea" v-model="ruleForm.additionalText"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button :disabled="isDisabled" type="primary" @click="submitForm('ruleForm')"
+          >{{ submitButtonValue }}</el-button
+        >
+        <el-button :disabled="isDisabled" @click="resetForm('ruleForm')">重置</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
 import { formatRFC3339 } from 'date-fns';
+import getFieldValue from '@/utils/object-utils';
 
-function getFieldValue(data, fieldName, defaultValue) {
-  const defValue = defaultValue === undefined ? null : defaultValue;
-  if (data === undefined || data == null) {
-    return defValue;
-  }
-  if (Object.hasOwn(data, fieldName)) {
-    return data[fieldName];
-  }
-  return defValue;
+// 根据props传入的数据初始化form内的数据
+function computeInitData(newData) {
+  return {
+    id: getFieldValue(newData, 'id', ''),
+    managedObject: getFieldValue(newData, 'managedObject', ''),
+    eventDate: getFieldValue(newData, 'eventDate', new Date()),
+    eventTime: getFieldValue(newData, 'eventTime', new Date()),
+    alarmType: getFieldValue(newData, 'alarmType', ''),
+    perceivedSeverity: getFieldValue(newData, 'perceivedSeverity', ''),
+    probableCause: getFieldValue(newData, 'probableCause', ''),
+    specificProblem: getFieldValue(newData, 'specificProblem', ''),
+    clearFlag: getFieldValue(newData, 'clearFlag', false),
+    terminateState: getFieldValue(newData, 'terminateState', false),
+    additionalText: getFieldValue(newData, 'additionalText', ''),
+  };
+}
+
+// 转换form data为alarm dto使用的格式
+function transformAlarmData(formData) {
+  const et = new Date();
+  et.setTime(formData.eventDate.getTime());
+  et.setHours(formData.eventTime.getHours());
+  et.setSeconds(formData.eventTime.getSeconds());
+  et.setMinutes(formData.eventTime.getMinutes());
+  et.setMilliseconds(formData.eventTime.getMilliseconds());
+
+  const alarmData = {
+    id: formData.id === '' ? null : parseInt(formData.id, 10),
+    managedObject: formData.managedObject,
+    eventTime: formatRFC3339(et, { fractionDigits: 3 }),
+    alarmType: formData.alarmType,
+    perceivedSeverity: formData.perceivedSeverity,
+    probableCause: formData.probableCause,
+    specificProblem: formData.specificProblem,
+    clearFlag: formData.clearFlag ? 1 : 0,
+    terminateState: formData.terminateState ? 1 : 0,
+    additionalText: formData.additionalText,
+  };
+  return alarmData;
+}
+
+function submit(vm, formData) {
+  const alarmData = transformAlarmData(formData);
+  vm.$emit('submit-edit', alarmData);
 }
 
 export default {
@@ -101,7 +145,9 @@ export default {
 
   data() {
     return {
-      createModel: this.isCreate,
+      isCreateModel: this.isCreate,
+      isDisabled: true,
+      submitButtonValue: this.isCreate ? '立即创建' : '提交修改',
       ruleForm: {
         id: getFieldValue(this.initData, 'id', ''),
         managedObject: getFieldValue(this.initData, 'managedObject', ''),
@@ -116,7 +162,7 @@ export default {
         additionalText: getFieldValue(this.initData, 'additionalText', ''),
       },
       rules: {
-        id: [{ required: !this.createModel, message: 'ID不能为空', trigger: 'change' }],
+        id: [{ required: !this.isCreateModel, message: 'ID不能为空', trigger: 'change' }],
         name: [
           { required: true, message: '请输入ManagedObject', trigger: 'blur' },
           {
@@ -151,38 +197,44 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.$confirm('确认提交告警信息?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            this.disable();
+            submit(this, this.ruleForm);
 
-          const et = new Date();
-          et.setTime(this.ruleForm.eventDate.getTime());
-          et.setHours(this.ruleForm.eventTime.getHours());
-          et.setSeconds(this.ruleForm.eventTime.getSeconds());
-          et.setMinutes(this.ruleForm.eventTime.getMinutes());
-          et.setMilliseconds(this.ruleForm.eventTime.getMilliseconds());
-
-          const alarmData = {
-            id: this.ruleForm.id === '' ? null : parseInt(this.ruleForm.id, 10),
-            managedObject: this.ruleForm.managedObject,
-            eventTime: formatRFC3339(et, { fractionDigits: 3 }),
-            alarmType: this.ruleForm.alarmType,
-            perceivedSeverity: this.ruleForm.perceivedSeverity,
-            probableCause: this.ruleForm.probableCause,
-            specificProblem: this.ruleForm.specificProblem,
-            clearFlag: this.ruleForm.clearFlag ? 1 : 0,
-            terminateState: this.ruleForm.terminateState ? 1 : 0,
-            additionalText: this.ruleForm.additionalText,
-          };
-
-          console.log(alarmData);
+            this.$message({
+              type: 'success',
+              message: '提交成功!',
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消提交',
+            });
+          });
 
           return true;
         }
-        console.log('error submit!!');
         return false;
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    resetForm() {
+      // this.$refs[formName].resetFields();
+      this.ruleForm = computeInitData(this.initData);
+    },
+    enable() {
+      this.isDisabled = false;
+    },
+    disable() {
+      this.isDisabled = true;
+    },
+  },
+  watch: {
+    initData() {
+      this.ruleForm = computeInitData(this.initData);
     },
   },
 };
