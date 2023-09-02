@@ -34,7 +34,7 @@ function httpGet(url, params) {
   return requests({
     url,
     method: 'get',
-    params,
+    params: (params === undefined || params == null) ? {} : params,
   });
 }
 
@@ -42,7 +42,7 @@ function httpPost(url, data, headers) {
   return requests({
     url,
     method: 'post',
-    data,
+    data: (data === undefined || data == null) ? '' : data,
     headers: (headers === undefined || headers == null) ? {} : headers,
   });
 }

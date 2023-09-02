@@ -54,7 +54,6 @@ export default {
 </script>
 <style>
 .alarm-create-container {
-  padding: 8px;
-  padding-top: 24px;
+  margin-top: 16px;
 }
 </style>

@@ -4,7 +4,9 @@
       <router-link to="/">Home</router-link> |
       <router-link :to="{ name: 'alarm' }">告警管理</router-link>
     </nav>
-    <router-view/>
+    <transition name="router-view" appear>
+      <router-view/>
+    </transition>
   </div>
 </template>
 
@@ -28,5 +30,12 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.router-view-enter-active, .router-view-leave-active {
+  transition: all .4s;
+}
+.router-view-enter, .router-view-leave-to {
+  opacity: 0;
 }
 </style>

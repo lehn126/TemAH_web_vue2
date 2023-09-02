@@ -262,7 +262,7 @@ export default {
 </script>
 <style>
 .alarm-list-container {
-  padding: 8px;
+  min-height: 540px;
   text-align: center;
 }
 </style>

@@ -1,9 +1,8 @@
 <template>
   <my-tab :tabs="tabs" :current-tab.sync="currentTab">
-    <component
-      :is="currentTab"
-      @alarm-dblclick="handleRowDblclick"
-    ></component>
+    <transition name="slide-right" mode="out-in" appear>
+      <component :is="currentTab" @alarm-dblclick="handleRowDblclick" class="tag-views"></component>
+    </transition>
   </my-tab>
 </template>
 <script>
@@ -37,4 +36,38 @@ export default {
   },
 };
 </script>
-<style></style>
+<style scoped>
+.tag-views {
+  padding: 8px;
+  transition: all 0.8s ease;
+}
+.slide-left-enter-active, .slide-right-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-left-leave-active, .slide-right-leave-active {
+  transition: all 0.4s ease;
+}
+.slide-left-enter, .slide-right-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.slide-left-leave-to, .slide-right-enter {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-top-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-top-leave-active {
+  transition: all 0.4s ease;
+}
+.slide-top-enter {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.slide-top-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+</style>
