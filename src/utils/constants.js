@@ -12,7 +12,7 @@ export default {
   URL_TASK_GET_ALL: `${URL_TASK_BASE_URL}/task/getAll`,
   URL_TASK_GET: `${URL_TASK_BASE_URL}/task/get`,
   URL_TASK_DELETE: `${URL_TASK_BASE_URL}/task/del`,
-  URL_TASK_CHANGE_STATUS: `${URL_TASK_BASE_URL}/changesStatus`,
+  URL_TASK_CHANGE_STATUS: `${URL_TASK_BASE_URL}/task/changesStatus`,
   URL_TASK_CREATE: `${URL_TASK_BASE_URL}/task/add`,
   URL_TASK_UPDATE: `${URL_TASK_BASE_URL}/task/update`,
 };

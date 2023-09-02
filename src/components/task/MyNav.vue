@@ -1,7 +1,7 @@
 <template>
   <div class="nav">
     <el-row>
-      <el-col :span="2">
+      <el-col :span="3">
         <el-menu
           mode="vertical"
           :router="true"
@@ -20,7 +20,7 @@
           </el-menu-item>
         </el-menu>
       </el-col>
-      <el-col :span="22">
+      <el-col :span="21">
         <div class="nav-container">
           <transition name="slide-right" mode="out-in" appear>
             <router-view></router-view>

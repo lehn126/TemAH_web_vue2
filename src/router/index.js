@@ -16,18 +16,18 @@ const routes = [
     component: () => import('../views/alarm/AlarmView.vue'),
   },
   {
-    path: '/alarm/edit/:id(\\d+)?', // 使用正则表达式进行动态路由匹配（?表示传入id或不传入都行）
+    path: '/alarm/edit/:id(\\d+)', // 使用正则表达式进行动态路由匹配
     name: 'alarmEdit',
     component: () => import('../views/alarm/AlarmEditView.vue'),
   },
   {
     path: '/task',
-    name: 'task',
     component: () => import('../views/task/TaskView.vue'),
     children: [
-      { path: '', name: 'task-default', component: () => import('../views/task/TaskListView.vue') }, // 确保打开task后该子路由默认被渲染
+      { path: '', name: 'task', component: () => import('../views/task/TaskListView.vue') }, // 确保打开task后该子路由默认被渲染
       { path: 'list', name: 'task-list', component: () => import('../views/task/TaskListView.vue') },
       { path: 'create', name: 'task-create', component: () => import('../views/task/TaskCreateView.vue') },
+      { path: 'edit/:id(\\d+)', name: 'task-edit', component: () => import('../views/task/TaskEditView.vue') },
     ],
   },
 ];

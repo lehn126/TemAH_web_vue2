@@ -38,7 +38,7 @@ export default {
 <style scoped>
 .tab {
   display: flex;
-  border: 1px solid #67C23A;
+  border: 1px solid #67c23a;
   border-radius: 3px;
 }
 

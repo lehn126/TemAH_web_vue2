@@ -129,7 +129,7 @@ function submit(vm, formData) {
 }
 
 export default {
-  name: 'AlarmCreate',
+  name: 'AlarmEdit',
   props: {
     isCreate: {
       required: true,

@@ -71,6 +71,22 @@ function updateTask(vm, task, callback) {
   );
 }
 
+function updateTaskStatus(vm, taskId, newStatus, callback) {
+  http.simplePost(
+    vm,
+    `${constants.URL_TASK_CHANGE_STATUS}/${taskId}/${newStatus}`,
+    null,
+    null,
+    (response) => {
+      // 处理成功情况
+      http.notifySuccess(vm, `任务 [${taskId}] 更新成功`);
+      if (callback) {
+        callback(response);
+      }
+    },
+  );
+}
+
 function getTask(vm, taskId, callback) {
   const reqUrl = `${constants.URL_TASK_GET}/${taskId}`;
   http.simpleGet(
@@ -93,6 +109,7 @@ export default {
   getAll,
   deleteTask,
   createTask,
-  getTask,
   updateTask,
+  updateTaskStatus,
+  getTask,
 };
