@@ -11,8 +11,7 @@
 <script>
 import AlarmEdit from '@/components/test1/AlarmEdit.vue';
 import getFieldValue from '@/utils/object-utils';
-import http from '@/utils/http';
-import constants from '@/utils/constants';
+import alarmApi from '@/api/alarm-api';
 
 function fillEditAlarmData(operationAlarm, callback) {
   if (operationAlarm) {
@@ -59,36 +58,10 @@ function getEditAlarmData(vm, callback) {
   }
 
   if (!operationAlarm) {
-    const reqUrl = `${constants.URL_ALARM_GET}/${alarmId}`;
-    http.httpGet(reqUrl)
-      .then((response) => {
-        // 处理成功情况
-        const code = response.errCode;
-        if (code === '0') {
-          operationAlarm = response.data;
-        } else {
-          vm.$notify({
-            title: '操作失败',
-            message: `操作失败, 错误码: ${code}`,
-            type: 'warning',
-          });
-        }
-        if (!operationAlarm) {
-          vm.$notify.error({
-            title: '获取告警失败',
-            message: `没有找到ID为 [${alarmId}] 的告警信息`,
-          });
-        } else {
-          fillEditAlarmData(operationAlarm, callback);
-        }
-      })
-      .catch((error) => {
-        // 处理错误情况
-        vm.$notify.error({
-          title: '操作失败',
-          message: `操作失败, 错误: ${error.message}`,
-        });
-      });
+    alarmApi.getAlarm(vm, alarmId, (response) => {
+      operationAlarm = response.data;
+      fillEditAlarmData(operationAlarm, callback);
+    });
   } else {
     fillEditAlarmData(operationAlarm, callback);
   }
@@ -128,33 +101,9 @@ export default {
     },
     submitEdit(alarm) {
       if (alarm) {
-        http.httpPost(constants.URL_ALARM_UPDATE, alarm)
-          .then((response) => {
-            // 处理成功情况
-            const code = response.errCode;
-            if (code === '0') {
-              this.$notify({
-                title: '操作成功',
-                message: `告警 [${alarm.id}] 更新成功`,
-                type: 'success',
-                duration: 1000,
-              });
-            } else {
-              this.$notify({
-                title: '操作失败',
-                message: `操作失败, 错误码: ${code}`,
-                type: 'warning',
-              });
-            }
-          })
-          .catch((error) => {
-            // 处理错误情况
-            this.$notify.error({
-              title: '操作失败',
-              message: `操作失败, 错误: ${error.message}`,
-            });
-          });
-        this.$refs.alarmEditCom.enable();
+        alarmApi.updateAlarm(this, alarm, () => {
+          this.$refs.alarmEditCom.enable();
+        });
       }
     },
   },

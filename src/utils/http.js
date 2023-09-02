@@ -34,7 +34,7 @@ function httpGet(url, params) {
   return requests({
     url,
     method: 'get',
-    params: (params === undefined || params == null) ? {} : params,
+    params: params === undefined || params == null ? {} : params,
   });
 }
 
@@ -42,13 +42,101 @@ function httpPost(url, data, headers) {
   return requests({
     url,
     method: 'post',
-    data: (data === undefined || data == null) ? '' : data,
-    headers: (headers === undefined || headers == null) ? {} : headers,
+    data: data === undefined || data == null ? '' : data,
+    headers: headers === undefined || headers == null ? {} : headers,
   });
+}
+
+function notifySuccess(vm, message, title) {
+  vm.$notify({
+    title: title || '操作成功',
+    message: message || '操作执行成功',
+    type: 'success',
+    duration: 1000,
+  });
+}
+
+function notifyError(vm, message, title) {
+  vm.$notify.error({
+    title: title || '操作失败',
+    message: message || '操作失败',
+  });
+}
+
+function notifyWarning(vm, message, title) {
+  vm.$notify({
+    title: title || '操作失败',
+    message: message || '操作失败',
+    type: 'warning',
+  });
+}
+
+function notifyCodeWarning(vm, code, title) {
+  vm.$notify({
+    title: title || '操作失败',
+    message: code ? `操作失败, 错误码: ${code}` : '操作失败',
+    type: 'warning',
+  });
+}
+
+function simpleGet(vm, url, params, successCallback, failedCallback, errorCallback) {
+  httpGet(url, params)
+    .then((response) => {
+      // 处理成功情况
+      const code = response.errCode;
+      if (code === '0') {
+        if (successCallback) {
+          successCallback(response);
+        }
+      } else {
+        notifyCodeWarning(vm, code);
+        if (failedCallback) {
+          failedCallback(response);
+        }
+      }
+    })
+    .catch((error) => {
+      // 处理错误情况
+      notifyError(vm, `操作失败, 错误: ${error.message}`);
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+function simplePost(vm, url, data, headers, successCallback, failedCallback, errorCallback) {
+  httpPost(url, data, headers)
+    .then((response) => {
+      // 处理成功情况
+      const code = response.errCode;
+      if (code === '0') {
+        if (successCallback) {
+          successCallback(response);
+        }
+      } else {
+        notifyCodeWarning(vm, code);
+        if (failedCallback) {
+          failedCallback(response);
+        }
+      }
+    })
+    .catch((error) => {
+      // 处理错误情况
+      notifyError(vm, `操作失败, 错误: ${error.message}`);
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
 }
 
 export default {
   requests,
   httpGet,
   httpPost,
+  notifySuccess,
+  notifyError,
+  notifyWarning,
+  notifyCodeWarning,
+  simpleGet,
+  simplePost,
 };

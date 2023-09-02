@@ -205,10 +205,10 @@ export default {
             this.disable();
             submit(this, this.ruleForm);
 
-            this.$message({
-              type: 'success',
-              message: '提交成功!',
-            });
+            // this.$message({
+            //   type: 'success',
+            //   message: '提交成功!',
+            // });
           }).catch(() => {
             this.$message({
               type: 'info',

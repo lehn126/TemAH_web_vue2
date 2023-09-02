@@ -108,70 +108,9 @@
   </div>
 </template>
 <script>
-import http from '@/utils/http';
-import constants from '@/utils/constants';
+import alarmApi from '@/api/alarm-api';
 
 const PAGE_SIZE = 10;
-
-function getAll(pageIndex, sortBy, sortOrder, callback) {
-  let reqPageIndex = pageIndex;
-  if (pageIndex < 0) {
-    reqPageIndex = 0;
-  }
-
-  http
-    .httpGet(constants.URL_ALARM_GET_ALL, {
-      pageIndex: reqPageIndex,
-      pageSize: PAGE_SIZE,
-      sortBy,
-      sortOrder,
-    })
-    .then((response) => {
-      // 处理成功情况
-      const code = response.errCode;
-      if (code === '0') {
-        callback(response);
-      }
-    })
-    .catch((error) => {
-      // 处理错误情况
-      this.$notify.error({
-        title: '操作失败',
-        message: `操作失败, 错误: ${error.message}`,
-        type: 'warning',
-      });
-    });
-}
-
-function terminateAlarms(ids, vm, callback) {
-  http.httpPost(constants.URL_ALARM_TERMINATE, ids, { 'Content-Type': 'text/plain' })
-    .then((response) => {
-      // 处理成功情况
-      const code = response.errCode;
-      if (code === '0') {
-        vm.$notify({
-          title: '操作成功',
-          message: 'Terminate操作执行成功',
-          type: 'success',
-          duration: 1000,
-        });
-        callback();
-      } else {
-        vm.$notify({
-          title: '操作失败',
-          message: `操作失败, 错误码: ${code}`,
-          type: 'warning',
-        });
-      }
-    })
-    .catch((error) => {
-      // 处理错误情况
-      vm.$notify.error({
-        title: '操作失败',
-        message: `操作失败, 错误: ${error.message}`,
-      });
-    });
-}
 
 export default {
   name: 'AlarmList',
@@ -204,16 +143,37 @@ export default {
       this.pageSize = respData.data.pageSize;
     },
     pageBefore() {
-      getAll(this.pageIndex - 1, this.sortBy, this.sortOrder, this.refreshPageData);
+      alarmApi.getAll(
+        this,
+        this.pageIndex - 1,
+        PAGE_SIZE,
+        this.sortBy,
+        this.sortOrder,
+        this.refreshPageData,
+      );
     },
     pageAfter() {
-      getAll(this.pageIndex + 1, this.sortBy, this.sortOrder, this.refreshPageData);
+      alarmApi.getAll(
+        this,
+        this.pageIndex + 1,
+        PAGE_SIZE,
+        this.sortBy,
+        this.sortOrder,
+        this.refreshPageData,
+      );
     },
     refreshCurrentPage() {
-      getAll(this.pageIndex, this.sortBy, this.sortOrder, this.refreshPageData);
+      alarmApi.getAll(
+        this,
+        this.pageIndex,
+        PAGE_SIZE,
+        this.sortBy,
+        this.sortOrder,
+        this.refreshPageData,
+      );
     },
     handlePageChange(val) {
-      getAll(val, this.sortBy, this.sortOrder, this.refreshPageData);
+      alarmApi.getAll(this, val, PAGE_SIZE, this.sortBy, this.sortOrder, this.refreshPageData);
     },
     transformClearFlag(row, column, cellValue) {
       return cellValue === 0 ? 'NOT_CLEARED' : 'CLEARED';
@@ -240,11 +200,16 @@ export default {
           type: 'warning',
         })
           .then(() => {
-            this.$message({
-              type: 'success',
-              message: '开始执行操作!',
-            });
-            terminateAlarms(this.selectedRows.map((alarm) => alarm.id).join(','), this, this.refreshCurrentPage);
+            // this.$message({
+            //   type: 'success',
+            //   message: '开始执行操作!',
+            // });
+
+            alarmApi.terminateAlarms(
+              this,
+              this.selectedRows.map((alarm) => alarm.id).join(','),
+              this.refreshCurrentPage,
+            );
           })
           .catch(() => {
             this.$message({
@@ -256,7 +221,7 @@ export default {
     },
   },
   mounted() {
-    getAll(1, this.sortBy, this.sortOrder, this.refreshPageData);
+    alarmApi.getAll(this, 1, PAGE_SIZE, this.sortBy, this.sortOrder, this.refreshPageData);
   },
 };
 </script>
