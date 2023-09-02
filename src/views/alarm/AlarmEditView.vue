@@ -9,9 +9,9 @@
   </div>
 </template>
 <script>
-import AlarmEdit from '@/components/test1/AlarmEdit.vue';
 import getFieldValue from '@/utils/object-utils';
 import alarmApi from '@/api/alarm-api';
+import AlarmEdit from '../../components/alarm/AlarmEdit.vue';
 
 function fillEditAlarmData(operationAlarm, callback) {
   if (operationAlarm) {

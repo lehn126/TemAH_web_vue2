@@ -4,8 +4,8 @@
   </div>
 </template>
 <script>
-import AlarmEdit from '@/components/test1/AlarmEdit.vue';
 import alarmApi from '@/api/alarm-api';
+import AlarmEdit from '@/components/alarm/AlarmEdit.vue';
 
 export default {
   name: 'AlarmCreate',
