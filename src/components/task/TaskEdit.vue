@@ -62,7 +62,7 @@ function computeInitData(newData) {
 // 转换form data为API dto使用的格式
 function transformFormData(formData) {
   const apiData = {
-    jobId: formData.jobId === '' ? null : parseInt(formData.jobId, 10),
+    jobId: formData.jobId === '' ? null : formData.jobId,
     beanName: formData.beanName,
     methodName: formData.methodName,
     methodParams: formData.methodParams,

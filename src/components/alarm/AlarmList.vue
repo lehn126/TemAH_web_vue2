@@ -136,7 +136,13 @@ export default {
   },
   methods: {
     refreshPageData(respData) {
-      this.alarms = respData.data.pageData;
+      const data = respData.data.pageData;
+      if (data != null) {
+        this.alarms = data;
+      } else {
+        this.alarms = [];
+      }
+
       this.maxCount = respData.data.maxCount;
       this.maxPage = respData.data.maxPage;
       this.pageIndex = respData.data.pageIndex;

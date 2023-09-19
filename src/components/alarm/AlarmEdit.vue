@@ -109,7 +109,7 @@ function transformAlarmData(formData) {
   et.setMilliseconds(formData.eventTime.getMilliseconds());
 
   const alarmData = {
-    id: formData.id === '' ? null : parseInt(formData.id, 10),
+    id: formData.id === '' ? null : formData.id,
     managedObject: formData.managedObject,
     eventTime: formatRFC3339(et, { fractionDigits: 3 }),
     alarmType: formData.alarmType,

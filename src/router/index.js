@@ -16,7 +16,7 @@ const routes = [
     component: () => import('../views/alarm/AlarmView.vue'),
   },
   {
-    path: '/alarm/edit/:id(\\d+)', // 使用正则表达式进行动态路由匹配
+    path: '/alarm/edit/:id(\\S+)', // 使用正则表达式进行动态路由匹配
     name: 'alarmEdit',
     component: () => import('../views/alarm/AlarmEditView.vue'),
   },
